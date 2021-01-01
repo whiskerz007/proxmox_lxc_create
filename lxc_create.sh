@@ -15,7 +15,6 @@ function error_exit() {
   local REASON="\e[97m${1:-$DEFAULT}\e[39m"
   local FLAG="\e[91m[ERROR] \e[93m$EXIT@$LINE"
   msg "$FLAG $REASON" 1>&2
-  [ ! -z ${CTID-} ] && cleanup_ctid
   exit $EXIT
 }
 function warn() {
@@ -31,14 +30,6 @@ function info() {
 function msg() {
   local TEXT="$1"
   echo -e "$TEXT"
-}
-function cleanup_ctid() {
-  if pct status $CTID &>/dev/null; then
-    if [ "$(pct status $CTID | awk '{print $2}')" == "running" ]; then
-      pct stop $CTID
-    fi
-    pct destroy $CTID
-  fi
 }
 function select_storage() {
   local CLASS=$1
